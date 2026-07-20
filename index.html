@@ -1,11 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
-    
+    <div id="app">
+        <div style="display: flex;">
+            <div>
+                <img :src="imageLink" alt="img" width="100" height="200">
+                <ul>Cast
+                    <div v-for="actors in cast" style="display:flex; justify-content: left; gap: 2rem;">
+                        <li style="width: 300px;">{{actors.character}}</li>
+                        <button @click="addToFav(actors.character)">⭐</button>
+                    </div>
+                </ul>
+            </div>
+            <div>
+                <h1>Statistics</h1>
+                <ul>
+                    <li>Air: </li>
+                    <li>Fire: </li>
+                    <li>Earth: </li>
+                    <li>Water: </li>
+                </ul>
+            </div>
+        </div>
+        <h3>New Character</h3>
+        <pre>{{newCharacter}}</pre>
+        <label for="character-name">Name</label>
+        <input type="text" v-model="newCharacter.character" @keyup.enter="addNewCharacter">
+        <div>
+            <h3>Favorites</h3>
+            <p v-if="favorites.length === 0">Currently no favorites.</p>
+            <div v-else style="display: flex;">
+                <p v-for="fav,index in favorites"> {{fav}} &nbsp; &nbsp; </p>
+            </div>
+        </div>
+        <p v-show="imageLink.length < 0">Exist</p>
+    </div>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+        const { createApp } = Vue
+        const app = createApp({
+            data() {
+                return {
+                    newCharacter: {
+                        character: '',
+                        element: []
+                    },
+                    imageLink: 'https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQlXYTWdFgKPpuRtDYwLWWFmIk8RyoMj7wxNrB9wygwvOhkp3xx',
+                    cast: [
+                        { character: 'Thomas Shelby', element: ["Fire", "Air", "Earth", "Water"] },
+                        { character: 'Arthur Shelby', element: ["Fire"] },
+                        { character: 'Ada Shelby', element: ["Earth"] },
+                        { character: 'Polly', element: ["Fire", "Air", "Earth", "Water"] },
+                        { character: 'Alfie Solomons', element: ["Fire", "Air", "Earth"] },
+                    ],
+                    favorites: new Set()
+                }
+            },
+            methods: {
+                addToFav(data) {
+                    console.log(data)
+                    this.favorites.add(data)
+                },
+                addNewCharacter() {
+                    this.cast.push(this.newCharacter)
+                    this.newCharacter = {}
+                }
+            },
+            watch: {
+                getCharacterSummary: {
+
+                }
+            }
+        })
+
+        app.mount('#app')
+    </script>
 </body>
+
 </html>

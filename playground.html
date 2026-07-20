@@ -13,6 +13,8 @@
       <ul>
         <li v-for="number in listOfNumbers"> {{number}}</li>
       </ul>
+       <p>{{count}}</p>
+       <button v-on:click="incrementCount">Increment Counter</button>
     </div>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script>
@@ -21,7 +23,13 @@
             data(){
                 return{
                     message: 'Hello it works!',
-                    listOfNumbers: [1,2,3,4,5]
+                    listOfNumbers: [1,2,3,4,5],
+                    count: 1,
+                }
+            },
+            methods:{
+                incrementCount(){
+                    this.count++
                 }
             }
         })
