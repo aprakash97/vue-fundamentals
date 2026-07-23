@@ -1,74 +1,103 @@
-<script lang="ts">
+<script>
+import BenderStatistics from "./components/BenderStatistics.vue";
+import UserCard from "./components/UserCard.vue";
+import CharacterCard from "./components/CharacterCard.vue";
+
 export default {
-  data() {
-    return {
-      a: 122,
-      imageLink:
-        "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQlXYTWdFgKPpuRtDYwLWWFmIk8RyoMj7wxNrB9wygwvOhkp3xx",
-      cast: [
-        { character: "Alice" },
-        { character: "Bob" },
-        { character: "Charlie" },
-      ],
-      newCharacter: {
-        character: "",
-      },
-      favorites: [] as string[],
-    };
+  components: {
+    BenderStatistics,
+    UserCard,
+    CharacterCard,
   },
-  methods: {
-    addToFav(name: string) {
-      if (name && !this.favorites.includes(name)) {
-        this.favorites.push(name);
-      }
+  data: () => ({
+    newCharacter: {
+      name: "",
+      element: [],
     },
+    characterList: [
+      {
+        name: "Aang",
+        element: ["Air", "Earth", "Water", "Fire"],
+      },
+      {
+        name: "Zuko",
+        element: ["Fire"],
+      },
+      {
+        name: "Toph",
+        element: ["Earth"],
+      },
+      {
+        name: "Katara",
+        element: ["Water"],
+      },
+    ],
+    favoriteList: [],
+    userData: {
+      name: "Ben",
+      preferredFramework: "vue",
+      favFood: "rice",
+      favNumber: [1, 3, 4, 5],
+    },
+  }),
+
+  methods: {
     addNewCharacter() {
-      const name = this.newCharacter.character.trim();
-      if (name) {
-        this.cast.push({ character: name });
-        this.newCharacter.character = "";
-      }
+      this.characterList.push(this.newCharacter);
+      this.newCharacter = { name: "" };
+    },
+    addFavoriteCharacter(payload) {
+      this.favoriteList.push(payload);
+    },
+    changeName() {
+      this.userData.name = "Charlie";
     },
   },
 };
 </script>
 
 <template>
-  <div style="display: flex">
-    <div>
-      <img :src="imageLink" alt="img" width="100" height="200" />
-      <ul>
-        Cast
-        <div
-          v-for="actors in cast"
-          :key="actors.character"
-          style="display: flex; justify-content: left; gap: 2rem"
-        >
-          <li style="width: 300px">{{ actors.character }}</li>
-          <button @click="addToFav(actors.character)">⭐</button>
-        </div>
-      </ul>
-    </div>
-  </div>
-  <h3>New Character</h3>
+  <UserCard :userData="userData" @change-name="changeName" />
+  <!-- <button @click="changeName">Change Name</button> -->
+
+  <BenderStatistics :characterList="characterList" />
+
+  <h2>Characters</h2>
+  <p v-if="characterList.length === 0">There are no characters</p>
+  <ul v-else-if="characterList.length % 2 === 0">
+    <li
+      v-for="(character, index) in characterList"
+      :key="`even-character-${index}`"
+    >
+      <CharacterCard :character="character" @favorite="addFavoriteCharacter" />
+      <!-- <p>{{ character.name }}</p> -->
+      <!-- <button @click="favoriteCharacter(character)">⭐ Favorite</button> -->
+    </li>
+  </ul>
+  <p v-else>There are odd characters!</p>
+  <h2>Favorite Characters</h2>
+  <ul v-if="favoriteList.length > 0">
+    <li
+      v-for="(character, index) in favoriteList"
+      :key="`odd-character-${index}`"
+    >
+      {{ character }}
+    </li>
+  </ul>
+  <p v-else>No favorite characters yet!</p>
+  <h2>New Character</h2>
   <pre>{{ newCharacter }}</pre>
   <label for="character-name">Name</label>
   <input
     type="text"
-    id="character-name"
-    v-model="newCharacter.character"
+    v-model="newCharacter.name"
     @keyup.enter="addNewCharacter"
   />
-  <div>
-    <h3>Favorites</h3>
-    <p v-if="favorites.length === 0">Currently no favorites.</p>
-    <div v-else style="display: flex">
-      <p v-for="(fav, index) in favorites" :key="index">
-        {{ fav }} &nbsp; &nbsp;
-      </p>
-    </div>
-  </div>
-  <p v-show="imageLink.length < 0">Exist</p>
+  <p>
+    <span
+      v-for="(character, index) in characterList"
+      :key="`comma-list-character-${index}`"
+      >{{ character.name }}{{ index === characterList.length - 1 ? "" : ", " }}
+    </span>
+  </p>
 </template>
-
-<style scoped></style>
