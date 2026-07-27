@@ -2,12 +2,16 @@
 import BenderStatistics from "./components/BenderStatistics.vue";
 import UserCard from "./components/UserCard.vue";
 import CharacterCard from "./components/CharacterCard.vue";
+import BaseButton from "./components/BaseButton.vue";
+import BaseLayout from "./components/BaseLayout.vue";
 
 export default {
   components: {
     BenderStatistics,
     UserCard,
     CharacterCard,
+    BaseButton,
+    BaseLayout,
   },
   data: () => ({
     newCharacter: {
@@ -57,10 +61,16 @@ export default {
 </script>
 
 <template>
-  <UserCard :userData="userData" @change-name="changeName" />
-  <!-- <button @click="changeName">Change Name</button> -->
-
-  <BenderStatistics :characterList="characterList" />
+  <BaseLayout>
+    <template v-slot:sidebar>Aside</template>
+    <template v-slot:main>
+      <UserCard :userData="userData" @change-name="changeName" />
+    </template>
+    <template v-slot:footer>
+      <BenderStatistics :characterList="characterList" />
+    </template>
+  </BaseLayout>
+  <BaseButton :left="true"></BaseButton>
 
   <h2>Characters</h2>
   <p v-if="characterList.length === 0">There are no characters</p>
