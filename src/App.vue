@@ -4,6 +4,7 @@ import UserCard from "./components/UserCard.vue";
 import CharacterCard from "./components/CharacterCard.vue";
 import BaseButton from "./components/BaseButton.vue";
 import BaseLayout from "./components/BaseLayout.vue";
+import Test from "./components/Test.vue";
 
 export default {
   components: {
@@ -12,6 +13,7 @@ export default {
     CharacterCard,
     BaseButton,
     BaseLayout,
+    Test,
   },
   data: () => ({
     newCharacter: {
@@ -61,6 +63,7 @@ export default {
 </script>
 
 <template>
+  <Test />
   <BaseLayout>
     <template v-slot:sidebar>Aside</template>
     <template v-slot:main>
