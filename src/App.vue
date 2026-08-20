@@ -1,116 +1,119 @@
 <script>
-import BenderStatistics from "./components/BenderStatistics.vue";
-import UserCard from "./components/UserCard.vue";
-import CharacterCard from "./components/CharacterCard.vue";
-import BaseButton from "./components/BaseButton.vue";
-import BaseLayout from "./components/BaseLayout.vue";
-import Test from "./components/Test.vue";
+import HomePage from "./components/HomePage.vue";
+import LoginPage from "./components/LoginPage.vue";
+import UsersPage from "./components/UsersPage.vue";
 
 export default {
   components: {
-    BenderStatistics,
-    UserCard,
-    CharacterCard,
-    BaseButton,
-    BaseLayout,
-    Test,
+    HomePage,
+    LoginPage,
+    UsersPage,
   },
   data: () => ({
-    newCharacter: {
-      name: "",
-      element: [],
-    },
-    characterList: [
-      {
-        name: "Aang",
-        element: ["Air", "Earth", "Water", "Fire"],
-      },
-      {
-        name: "Zuko",
-        element: ["Fire"],
-      },
-      {
-        name: "Toph",
-        element: ["Earth"],
-      },
-      {
-        name: "Katara",
-        element: ["Water"],
-      },
-    ],
-    favoriteList: [],
-    userData: {
-      name: "Ben",
-      preferredFramework: "vue",
-      favFood: "rice",
-      favNumber: [1, 3, 4, 5],
-    },
+    pokedex: [1, 2, 3],
+    answer: 3,
+    currentPage: "Home",
+    users: [],
   }),
-
   methods: {
-    addNewCharacter() {
-      this.characterList.push(this.newCharacter);
-      this.newCharacter = { name: "" };
+    async fetchPokemon() {
+      this.pokedex = await fetch(
+        "https://pokeapi.co/api/v2/pokemon?limit=15",
+      ).then((response) => response.json());
     },
-    addFavoriteCharacter(payload) {
-      this.favoriteList.push(payload);
+    async fetchUsers() {
+      this.users = await fetch(
+        "https://jsonplaceholder.typicode.com/users",
+      ).then((response) => response.json());
     },
-    changeName() {
-      this.userData.name = "Charlie";
+    getAnswer(value) {
+      this.answer = value.length;
+    },
+    changePage(value) {
+      this.currentPage = value;
+    },
+    // showLoginPage() {
+    //   this.currentPage = "Login";
+    // },
+  },
+  created() {
+    this.fetchPokemon();
+    this.fetchUsers();
+  },
+  watch: {
+    pokedex(value) {
+      if (Array.isArray(value)) {
+        this.getAnswer(value);
+      } else {
+        this.getAnswer(value.results);
+      }
+    },
+  },
+  computed: {
+    currentComponent() {
+      return this.currentPage + "Page";
     },
   },
 };
 </script>
-
 <template>
-  <Test />
-  <BaseLayout>
-    <template v-slot:sidebar>Aside</template>
-    <template v-slot:main>
-      <UserCard :userData="userData" @change-name="changeName" />
-    </template>
-    <template v-slot:footer>
-      <BenderStatistics :characterList="characterList" />
-    </template>
-  </BaseLayout>
-  <BaseButton :left="true"></BaseButton>
-
-  <h2>Characters</h2>
-  <p v-if="characterList.length === 0">There are no characters</p>
-  <ul v-else-if="characterList.length % 2 === 0">
-    <li
-      v-for="(character, index) in characterList"
-      :key="`even-character-${index}`"
-    >
-      <CharacterCard :character="character" @favorite="addFavoriteCharacter" />
-      <!-- <p>{{ character.name }}</p> -->
-      <!-- <button @click="favoriteCharacter(character)">⭐ Favorite</button> -->
-    </li>
-  </ul>
-  <p v-else>There are odd characters!</p>
-  <h2>Favorite Characters</h2>
-  <ul v-if="favoriteList.length > 0">
-    <li
-      v-for="(character, index) in favoriteList"
-      :key="`odd-character-${index}`"
-    >
-      {{ character }}
-    </li>
-  </ul>
-  <p v-else>No favorite characters yet!</p>
-  <h2>New Character</h2>
-  <pre>{{ newCharacter }}</pre>
-  <label for="character-name">Name</label>
-  <input
-    type="text"
-    v-model="newCharacter.name"
-    @keyup.enter="addNewCharacter"
-  />
-  <p>
-    <span
-      v-for="(character, index) in characterList"
-      :key="`comma-list-character-${index}`"
-      >{{ character.name }}{{ index === characterList.length - 1 ? "" : ", " }}
+  <header class="header">
+    <span class="logo">
+      <img src="@/assets/mission-control-moodboard.png" width="30" />C'est La
+      Vue
     </span>
-  </p>
+    <nav class="nav">
+      <a href="#" @click.prevent="changePage('Home')">Home</a>
+      <a href="#" @click.prevent="changePage('Login')">Login</a>
+      <a href="#" @click.prevent="changePage('Users')">Users</a>
+    </nav>
+  </header>
+  <component :is="currentComponent" :users="users" />
+  <!-- <HomePage v-if="currentPage === 'Home'" />
+  <LoginPage v-else /> -->
+  <!-- <h1>Pokemon APP</h1>
+  <pre>{{ pokedex }}</pre>
+  <button @click="fetchPokemon">Get</button>
+  <p>Answer: {{ answer }}</p> -->
 </template>
+
+<style>
+* {
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #ccc;
+}
+
+span.logo {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+span.logo img {
+  margin-right: 8px;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+}
+
+.nav a {
+  padding: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.nav a:last-child {
+  padding-right: 0;
+}
+</style>
