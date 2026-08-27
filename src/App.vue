@@ -1,44 +1,59 @@
 <script>
+import { ref, Suspense } from "vue";
 import HomePage from "./components/HomePage.vue";
 import LoginPage from "./components/LoginPage.vue";
+import containerA from "./components/testComponents/containerA.vue";
+import containerB from "./components/testComponents/containerB.vue";
 import UsersPage from "./components/UsersPage.vue";
+import { commonNumber } from "./composables/dataStore";
 
 export default {
+  setup() {
+    const conto = ref("Var");
+
+    const fetchPokemon = async () => {
+      await fetch("https://pokeapi.co/api/v2/pokemon?limit=15").then(
+        (response) => response.json(),
+      );
+    };
+
+    return {
+      conto,
+      fetchPokemon,
+      commonNumber,
+    };
+  },
   components: {
     HomePage,
     LoginPage,
     UsersPage,
+    containerA,
+    containerB,
   },
   data: () => ({
     pokedex: [1, 2, 3],
     answer: 3,
     currentPage: "Home",
-    users: [],
+    counted: 4,
   }),
   methods: {
-    async fetchPokemon() {
-      this.pokedex = await fetch(
-        "https://pokeapi.co/api/v2/pokemon?limit=15",
-      ).then((response) => response.json());
-    },
-    async fetchUsers() {
-      this.users = await fetch(
-        "https://jsonplaceholder.typicode.com/users",
-      ).then((response) => response.json());
-    },
     getAnswer(value) {
       this.answer = value.length;
     },
     changePage(value) {
       this.currentPage = value;
     },
+    changeConto() {
+      console.log("clicked", this.conto);
+      this.conto = Math.random().toString();
+    },
+    increaseByTen() {
+      console.log("test", commonNumber, typeof commonNumber);
+      this.commonNumber = this.commonNumber + 100;
+    },
     // showLoginPage() {
     //   this.currentPage = "Login";
     // },
-  },
-  created() {
-    this.fetchPokemon();
-    this.fetchUsers();
   },
   watch: {
     pokedex(value) {
@@ -68,7 +83,22 @@ export default {
       <a href="#" @click.prevent="changePage('Users')">Users</a>
     </nav>
   </header>
-  <component :is="currentComponent" :users="users" />
+  <p>{{ conto }}</p>
+  <suspense>
+    <component
+      :is="currentComponent"
+      :message="currentPage"
+      :number="conto"
+      @changeConto="changeConto"
+    />
+
+    <template #fallback> Loading Data... </template>
+  </suspense>
+  <div class="composable-container">
+    {{ commonNumber }}
+    <containerA @increaseByTen="increaseByTen" />
+    <containerB @increaseByTen="increaseByTen" />
+  </div>
   <!-- <HomePage v-if="currentPage === 'Home'" />
   <LoginPage v-else /> -->
   <!-- <h1>Pokemon APP</h1>
@@ -115,5 +145,11 @@ span.logo img {
 
 .nav a:last-child {
   padding-right: 0;
+}
+
+.composable-container {
+  display: flex;
+  margin: 5rem;
+  width: 100px;
 }
 </style>
