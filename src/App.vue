@@ -17,10 +17,13 @@ export default {
       );
     };
 
+    const bgColor = ref("antiquewhite");
+
     return {
       conto,
       fetchPokemon,
       commonNumber,
+      bgColor,
     };
   },
   components: {
@@ -84,6 +87,9 @@ export default {
     </nav>
   </header>
   <p>{{ conto }}</p>
+  <h1>{{ bgColor }}</h1>
+  <input type="color" v-model="bgColor" />
+
   <suspense>
     <component
       :is="currentComponent"
@@ -113,6 +119,7 @@ export default {
   font-family: "Inter", sans-serif;
   margin: 0;
   padding: 0;
+  background-color: v-bind(bgColor);
 }
 
 .header {
@@ -151,5 +158,9 @@ span.logo img {
   display: flex;
   margin: 5rem;
   width: 100px;
+}
+
+button {
+  border: 1px solid red;
 }
 </style>
