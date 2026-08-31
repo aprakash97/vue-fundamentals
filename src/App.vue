@@ -4,7 +4,7 @@ import HomePage from "./components/HomePage.vue";
 import LoginPage from "./components/LoginPage.vue";
 import containerA from "./components/testComponents/containerA.vue";
 import containerB from "./components/testComponents/containerB.vue";
-import UsersPage from "./components/UsersPage.vue";
+import UsersPage from "@/components/views/UsersPage.vue";
 import { commonNumber } from "./composables/dataStore";
 
 export default {
@@ -81,16 +81,19 @@ export default {
       Vue
     </span>
     <nav class="nav">
-      <a href="#" @click.prevent="changePage('Home')">Home</a>
+      <!-- <a href="#" @click.prevent="changePage('Home')">Home</a>
       <a href="#" @click.prevent="changePage('Login')">Login</a>
-      <a href="#" @click.prevent="changePage('Users')">Users</a>
+      <a href="#" @click.prevent="changePage('Users')">Users</a> -->
+      <router-link to="/">Home</router-link>
+      <router-link to="/login">Login</router-link>
+      <router-link to="/users">Users</router-link>
     </nav>
   </header>
-  <p>{{ conto }}</p>
+  <!-- <p>{{ conto }}</p>
   <h1>{{ bgColor }}</h1>
-  <input type="color" v-model="bgColor" />
+  <input type="color" v-model="bgColor" /> -->
 
-  <suspense>
+  <!-- <suspense>
     <component
       :is="currentComponent"
       :message="currentPage"
@@ -99,12 +102,18 @@ export default {
     />
 
     <template #fallback> Loading Data... </template>
-  </suspense>
+  </suspense> -->
   <div class="composable-container">
     {{ commonNumber }}
     <containerA @increaseByTen="increaseByTen" />
     <containerB @increaseByTen="increaseByTen" />
   </div>
+
+  <suspense>
+    <router-view />
+
+    <template #fallback> Loading Data... </template>
+  </suspense>
   <!-- <HomePage v-if="currentPage === 'Home'" />
   <LoginPage v-else /> -->
   <!-- <h1>Pokemon APP</h1>
